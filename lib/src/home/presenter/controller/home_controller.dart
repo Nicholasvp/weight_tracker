@@ -60,13 +60,12 @@ class HomeController extends ChangeNotifier {
     store.appStatus = AppStatus.loading;
     Future.delayed(const Duration(milliseconds: 600));
     notifyListeners();
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<ExercicioEntity> listExercises = getExercises(store.treino);
     ResultEntity resultEntity = ResultEntity(
-        id: store.datetime,
-        listExercises: listExercises,
-        type: store.treino.name);
+      type: store.treino.name,
+      id: store.datetime,
+      listExercises: store.exercises,
+    );
 
     repository.insert(resultEntity);
 
