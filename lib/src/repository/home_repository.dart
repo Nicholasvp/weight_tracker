@@ -9,8 +9,6 @@ import 'package:weight_tracker/src/home/domain/enum/type_exercise.dart';
 
 import 'dart:developer' as developer;
 
-import 'package:weight_tracker/src/home/presenter/controller/home_controller.dart';
-
 class HomeRepository {
   late Database db;
 
@@ -30,8 +28,10 @@ class HomeRepository {
         resultEntity.listExercises.map((e) => e.toJson()).toList().toString();
     var existingData = await db
         .query('treinos', where: 'id = ?', whereArgs: [resultEntity.type]);
+
     if (existingData.isNotEmpty) {
-      await db.update('treinos', {'treino': treino, 'id': resultEntity.type});
+      await db.update('treinos', {'treino': treino},
+          where: 'id = ?', whereArgs: [resultEntity.type]);
     } else {
       await db.insert('treinos', {'treino': treino, 'id': resultEntity.type});
     }

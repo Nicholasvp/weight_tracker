@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weight_tracker/src/core/my_colors.dart';
 import 'package:weight_tracker/src/core/my_text.dart';
-import 'package:weight_tracker/src/home/domain/entities/exercicio_entity.dart';
 import 'package:weight_tracker/src/home/domain/enum/type_exercise.dart';
 import 'package:weight_tracker/src/home/presenter/controller/home_controller.dart';
 
@@ -15,7 +14,6 @@ class HomeCategories extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeController>(
       builder: (context, controller, _) {
-        var type = controller.store.treino;
         List<TypeExercise> listExercise = controller.getTreino();
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,

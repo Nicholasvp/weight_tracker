@@ -79,28 +79,6 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ResultEntity> getLastTreino(TypeExercise typeExercise) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    MapEntry<String, List<ExercicioEntity>> map = prefs
-        .getKeys()
-        .map((key) {
-          List<String> list = prefs.getStringList(key)!;
-          List<ExercicioEntity> listExercises = list
-              .map((e) => ExercicioEntity.fromJson(e))
-              .where((element) => element.type == typeExercise)
-              .toList();
-          return MapEntry(key, listExercises);
-        })
-        .toList()
-        .first;
-
-    ResultEntity resultEntity = ResultEntity(
-        id: map.key, listExercises: map.value, type: typeExercise.name);
-    developer.log(resultEntity.toJson());
-    return resultEntity;
-  }
-
   Future<void> getKeys() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var keys = prefs.getKeys();
@@ -136,12 +114,32 @@ class HomeController extends ChangeNotifier {
     }
   }
 
+  Future<void> initializeData() async {
+    store.appStatus = AppStatus.loading;
+    await getExercisesFromDB();
+    store.appStatus = AppStatus.initial;
+    notifyListeners();
+  }
+
+  Future<void> getExercisesFromDB() async {
+    store.appStatus = AppStatus.loading;
+    TypeExercise type = store.treino;
+    var result = await repository.getExercise(type);
+    if (result.isNotEmpty) {
+      store.exercises = result;
+    } else {
+      store.exercises = getExercises(type);
+    }
+    store.appStatus = AppStatus.initial;
+  }
+
   List<TypeExercise> getTreino() {
     return TypeExercise.values.toList();
   }
 
-  void changeTreino(TypeExercise type) {
+  void changeTreino(TypeExercise type) async {
     store.treino = type;
+    await initializeData();
     developer.log(store.treino.name);
     notifyListeners();
   }
