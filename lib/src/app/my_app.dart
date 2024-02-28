@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weight_tracker/src/core/my_colors.dart';
 import 'package:weight_tracker/src/home/presenter/page/home_page.dart';
+import 'package:weight_tracker/src/results/presentation/pages/charps_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/home',
         routes: {
           '/home': (context) => const HomePage(),
+          '/charps': (context) => const CharpsPage(),
         });
   }
 }

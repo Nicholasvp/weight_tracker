@@ -34,7 +34,8 @@ class DB {
   String get _results => '''
     CREATE TABLE results (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      result TEXT
+      result TEXT,
+      type TEXT
     );
   ''';
 }

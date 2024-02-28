@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:weight_tracker/src/database/db.dart';
 import 'package:weight_tracker/src/home/domain/entities/exercicio_entity.dart';
@@ -12,14 +13,17 @@ import 'dart:developer' as developer;
 class HomeRepository {
   late Database db;
 
-  void getItems() async {
+  Future<List<ResultEntity>> fetchResults({required String type}) async {
     db = await DB.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('results');
-    final List<Map<String, dynamic>> maps2 = await db.query('treinos');
-    developer.log('==============');
-    developer.log("RESULTADOS: $maps");
-    developer.log('==============');
-    developer.log('TREINOS: $maps2');
+    final List<Map<String, dynamic>> resultDB =
+        await db.query('results', where: 'type = ?', whereArgs: [type]);
+
+    List<ResultEntity> listResults = resultDB.map((e) {
+      return ResultEntity.fromJson(jsonDecode(e['result']));
+    }).toList();
+
+    developer.log('Pegando Items');
+    return listResults;
   }
 
   void insert(ResultEntity resultEntity) async {
@@ -35,6 +39,10 @@ class HomeRepository {
     } else {
       await db.insert('treinos', {'treino': treino, 'id': resultEntity.type});
     }
+    await db.insert(
+      'results',
+      {'result': jsonEncode(resultEntity.toJson()), 'type': resultEntity.type},
+    );
   }
 
   void clearTreino() async {

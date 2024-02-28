@@ -9,43 +9,50 @@ class ResultsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeController>(builder: (context, controller, _) {
-      List<TypeExercise> listExercise = controller.getTreino();
-      return Padding(
-        padding: const EdgeInsets.all(32),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 500,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 22),
-                  itemCount: listExercise.length,
-                  itemBuilder: (context, index) {
-                    return ElevatedButton(
-                      onPressed: () async {
-                        controller.repository.getItems();
-                      },
-                      child: Text(
-                        listExercise[index].name.toUpperCase(),
-                        style: MyText.subtitle,
-                      ),
-                    );
-                  },
+    return Consumer<HomeController>(
+      builder: (context, controller, _) {
+        List<TypeExercise> listExercise = controller.getTreino();
+        return Padding(
+          padding: const EdgeInsets.all(32),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 500,
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 22),
+                    itemCount: listExercise.length,
+                    itemBuilder: (context, index) {
+                      return ElevatedButton(
+                        onPressed: () async {
+                          await controller.repository
+                              .fetchResults(type: listExercise[index].name)
+                              .then((listResults) {
+                            controller.store.listResults = listResults;
+                            Navigator.pushNamed(context, '/charps');
+                          });
+                        },
+                        child: Text(
+                          listExercise[index].name.toUpperCase(),
+                          style: MyText.subtitle,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () => controller.repository.clearResults(),
-                  child: const Text('Limpar resultados')),
-              ElevatedButton(
-                  onPressed: () => controller.repository.clearTreino(),
-                  child: const Text('Limpar treinos')),
-            ],
+                ElevatedButton(
+                    onPressed: () => controller.repository.clearResults(),
+                    child: const Text('Limpar resultados')),
+                ElevatedButton(
+                    onPressed: () => controller.repository.clearTreino(),
+                    child: const Text('Limpar treinos')),
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

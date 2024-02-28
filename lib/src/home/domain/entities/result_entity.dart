@@ -26,7 +26,7 @@ class ResultEntity {
     return ResultEntity(
       id: map['id'] as String,
       listExercises: List<ExercicioEntity>.from(
-        (map['listExercises'] as List<int>).map<ExercicioEntity>(
+        (map['listExercises'] as List<dynamic>).map<ExercicioEntity>(
           (x) => ExercicioEntity.fromMap(x as Map<String, dynamic>),
         ),
       ),
