@@ -1,8 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:weight_tracker/src/home/domain/entities/result_entity.dart';
+import 'package:weight_tracker/src/home/domain/enum/type_exercise.dart';
 
 class _BarChart extends StatelessWidget {
-  const _BarChart();
+  const _BarChart({required this.listResults, required this.exerciseName});
+  final List<ResultEntity> listResults;
+  final String exerciseName;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,7 @@ class _BarChart extends StatelessWidget {
             return BarTooltipItem(
               rod.toY.round().toString(),
               const TextStyle(
-                color: Colors.red,
+                color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
             );
@@ -44,33 +48,12 @@ class _BarChart extends StatelessWidget {
 
   Widget getTitles(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Colors.red,
+      color: Colors.green,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
     String text;
     switch (value.toInt()) {
-      case 0:
-        text = 'Mn';
-        break;
-      case 1:
-        text = 'Te';
-        break;
-      case 2:
-        text = 'Wd';
-        break;
-      case 3:
-        text = 'Tu';
-        break;
-      case 4:
-        text = 'Fr';
-        break;
-      case 5:
-        text = 'St';
-        break;
-      case 6:
-        text = 'Sn';
-        break;
       default:
         text = '';
         break;
@@ -107,12 +90,28 @@ class _BarChart extends StatelessWidget {
       );
 
   LinearGradient get _barsGradient => const LinearGradient(
-        colors: [Colors.black, Colors.red],
+        colors: [Colors.black, Colors.green],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
       );
+  List<BarChartGroupData> get barGroups => listResults
+      .map((e) => BarChartGroupData(
+            x: listResults.indexOf(e),
+            barRods: [
+              BarChartRodData(
+                toY: e.listExercises
+                    .where((element) => element.nome == exerciseName)
+                    .first
+                    .peso
+                    .toDouble(),
+                gradient: _barsGradient,
+              ),
+            ],
+            showingTooltipIndicators: [0],
+          ))
+      .toList();
 
-  List<BarChartGroupData> get barGroups => [
+  List<BarChartGroupData> get barGroups2 => [
         BarChartGroupData(
           x: 0,
           barRods: [
@@ -187,7 +186,10 @@ class _BarChart extends StatelessWidget {
 }
 
 class BarChartSample3 extends StatefulWidget {
-  const BarChartSample3({super.key});
+  const BarChartSample3(
+      {super.key, required this.listResults, required this.exerciseName});
+  final List<ResultEntity> listResults;
+  final String exerciseName;
 
   @override
   State<StatefulWidget> createState() => BarChartSample3State();
@@ -196,9 +198,10 @@ class BarChartSample3 extends StatefulWidget {
 class BarChartSample3State extends State<BarChartSample3> {
   @override
   Widget build(BuildContext context) {
-    return const AspectRatio(
+    return AspectRatio(
       aspectRatio: 1.6,
-      child: _BarChart(),
+      child: _BarChart(
+          listResults: widget.listResults, exerciseName: widget.exerciseName),
     );
   }
 }
