@@ -24,26 +24,39 @@ class CharpsPage extends StatelessWidget {
             );
           }
           return ListView.separated(
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: listResults.first!.listExercises.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        listResults.first!.listExercises[index].nome,
+            separatorBuilder: (context, index) => const Divider(),
+            itemCount: listResults.first!.listExercises.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      listResults.first!.listExercises[index].nome,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
-                      BarChartSample3(
-                        listResults: listResults.cast<ResultEntity>(),
-                        exerciseName:
-                            listResults.first!.listExercises[index].nome,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 10,
+                      height: 300,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        child: BarChartSample3(
+                          listResults: listResults.cast<ResultEntity>(),
+                          exerciseName:
+                              listResults.first!.listExercises[index].nome,
+                        ),
                       ),
-                    ],
-                  ),
-                );
-              });
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
         },
       ),
     );

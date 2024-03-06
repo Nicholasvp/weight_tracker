@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:weight_tracker/src/core/my_text.dart';
 import 'package:weight_tracker/src/home/domain/enum/type_exercise.dart';
 import 'package:weight_tracker/src/home/presenter/controller/home_controller.dart';
+import 'package:weight_tracker/src/home/presenter/widgets/modal_clear.dart';
 
 class ResultsPage extends StatelessWidget {
   const ResultsPage({super.key});
@@ -27,7 +28,7 @@ class ResultsPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return ElevatedButton(
                         onPressed: () async {
-                          await controller.repository
+                          await controller
                               .fetchResults(type: listExercise[index].name)
                               .then((listResults) {
                             controller.store.listResults = listResults;
@@ -43,11 +44,31 @@ class ResultsPage extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                    onPressed: () => controller.repository.clearResults(),
-                    child: const Text('Limpar resultados')),
-                ElevatedButton(
-                    onPressed: () => controller.repository.clearTreino(),
-                    child: const Text('Limpar treinos')),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: () => controller.modalClearResults(
+                    context: context,
+                    widget: const ModalClear(),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Spacer(),
+                      Text(
+                        'Limpar resultados',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Spacer(),
+                      Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

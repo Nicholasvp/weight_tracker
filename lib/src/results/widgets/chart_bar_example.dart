@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:weight_tracker/src/home/domain/entities/result_entity.dart';
 import 'package:weight_tracker/src/home/domain/enum/type_exercise.dart';
+import 'package:weight_tracker/src/results/utils/result_utils.dart';
 
 class _BarChart extends StatelessWidget {
   const _BarChart({required this.listResults, required this.exerciseName});
@@ -10,6 +11,8 @@ class _BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ResultUtils utils = ResultUtils();
+
     return BarChart(
       BarChartData(
         barTouchData: barTouchData,
@@ -18,7 +21,7 @@ class _BarChart extends StatelessWidget {
         barGroups: barGroups,
         gridData: const FlGridData(show: false),
         alignment: BarChartAlignment.spaceAround,
-        maxY: 20,
+        maxY: utils.maxY(listResults),
       ),
     );
   }
@@ -95,20 +98,22 @@ class _BarChart extends StatelessWidget {
         end: Alignment.topCenter,
       );
   List<BarChartGroupData> get barGroups => listResults
-      .map((e) => BarChartGroupData(
-            x: listResults.indexOf(e),
-            barRods: [
-              BarChartRodData(
-                toY: e.listExercises
-                    .where((element) => element.nome == exerciseName)
-                    .first
-                    .peso
-                    .toDouble(),
-                gradient: _barsGradient,
-              ),
-            ],
-            showingTooltipIndicators: [0],
-          ))
+      .map(
+        (e) => BarChartGroupData(
+          x: listResults.indexOf(e),
+          barRods: [
+            BarChartRodData(
+              toY: e.listExercises
+                  .where((element) => element.nome == exerciseName)
+                  .first
+                  .peso
+                  .toDouble(),
+              gradient: _barsGradient,
+            ),
+          ],
+          showingTooltipIndicators: [0],
+        ),
+      )
       .toList();
 
   List<BarChartGroupData> get barGroups2 => [
@@ -199,9 +204,11 @@ class BarChartSample3State extends State<BarChartSample3> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.6,
+      aspectRatio: 1,
       child: _BarChart(
-          listResults: widget.listResults, exerciseName: widget.exerciseName),
+        listResults: widget.listResults,
+        exerciseName: widget.exerciseName,
+      ),
     );
   }
 }

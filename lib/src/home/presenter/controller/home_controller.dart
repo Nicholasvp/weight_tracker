@@ -17,7 +17,7 @@ import 'package:weight_tracker/src/repository/home_repository.dart';
 class HomeController extends ChangeNotifier {
   final store = HomeStore();
   final database = DB.instance;
-  final repository = HomeRepository();
+  final _repository = HomeRepository();
 
   void toExercisePage() {
     store.currentPage = 0;
@@ -67,7 +67,7 @@ class HomeController extends ChangeNotifier {
       listExercises: store.exercises,
     );
 
-    repository.insert(resultEntity);
+    _repository.insert(resultEntity);
 
     store.appStatus = AppStatus.finished;
     notifyListeners();
@@ -123,7 +123,7 @@ class HomeController extends ChangeNotifier {
   Future<void> getExercisesFromDB() async {
     store.appStatus = AppStatus.loading;
     TypeExercise type = store.treino;
-    var result = await repository.getExercise(type);
+    var result = await _repository.getExercise(type);
     if (result.isNotEmpty) {
       store.exercises = result;
     } else {
@@ -141,5 +141,20 @@ class HomeController extends ChangeNotifier {
     await initializeData();
     developer.log(store.treino.name);
     notifyListeners();
+  }
+
+  Future<List<ResultEntity>> fetchResults({required String type}) {
+    return _repository.fetchResults(type: type);
+  }
+
+  Future<void> modalClearResults({
+    required BuildContext context,
+    required Widget widget,
+  }) async {
+    bool? confirmed = await showModalBottomSheet(
+        constraints: const BoxConstraints(maxHeight: 300),
+        context: context,
+        builder: (context) => widget);
+    confirmed ?? false ? _repository.clearResults() : null;
   }
 }
